@@ -14,6 +14,7 @@ class Game
 
   def initialize
     @code = Array.new(CODE_LEN) { rand(COLORS_COUNT) }
+    @remaining_chances = INITIAL_CHANCES
     @guesses = @code.map do |_number|
       {
         color: false,
@@ -36,6 +37,7 @@ class Game
     puts ''
     puts "#{num_correct_guesses} guesses correct in color and position".green
     puts "#{num_close_guesses} guesses correct in color, but not position".brown
+    puts "Current attempt: #{INITIAL_CHANCES - @remaining_chances + 1}/#{INITIAL_CHANCES}"
   end
 
   def make_guess(guess)
@@ -45,9 +47,9 @@ class Game
     end
 
     # Restore guesses to initial state before analyzing new guess
-    @guesses.each do |guess|
-      guess[:color] = false
-      guess[:position] = false
+    @guesses.each do |guess_object|
+      guess_object[:color] = false
+      guess_object[:position] = false
     end
 
     new_guesses = guess.split(//).map(&:to_i)
@@ -74,13 +76,34 @@ class Game
       @guesses[i][:number] = digit
     end
 
+    @remaining_chances -= 1
+
     # pp @guesses
+  end
+
+  # A game is over when the player either correctly guesses the code,
+  # or exahsts all their chances
+  def over?
+    @remaining_chances.zero? || code_correctly_guessed?
+  end
+
+  def won?
+    code_correctly_guessed?
+  end
+
+  def conclude
+    puts 'Code was'
+    @code.map { |digit| get_representation(digit) }.each { |x| print " #{x} " }
   end
 
   private
 
+  def code_correctly_guessed?
+    @guesses.all? { |guess| guess[:position] }
+  end
+
   def get_representation(guess)
-    if guess[:number]
+    if guess[:numbeSr]
       " #{apply_color(guess[:number])} "
     else
       ' _ '.bold
