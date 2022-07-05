@@ -34,7 +34,7 @@ class Game
     num_close_guesses = @guesses.count {|guess| guess[:color] && !guess[:position]}
     
 
-    @guesses.map {|guess| get_representation(guess)}.each {|x| print x}
+    @guesses.map {|guess| get_representation(guess)}.each {|x| print " #{x} "}
     puts ""
     puts "#{num_correct_guesses} guesses correct in color and position".green
     puts "#{num_close_guesses} guesses correct in color, but not position".brown
@@ -55,8 +55,8 @@ class Game
     new_guesses = guess.split(//).map(&:to_i)
     position_incorrect = []
     
-    p "Code: ", @code
-    p "Guess: ", new_guesses
+    # p "Code: ", @code
+    # p "Guess: ", new_guesses
 
     # Number of guesses correct in both color (digit) and position
     new_guesses.each_with_index do |digit, i|  
@@ -68,7 +68,7 @@ class Game
       end
     end
 
-    p "position incorrect: ", position_incorrect
+    # p "position incorrect: ", position_incorrect
 
     # Analyze each guess and check whether it's correct or close.
     new_guesses.each_with_index do |digit, i|
@@ -79,7 +79,7 @@ class Game
       @guesses[i][:number] = digit
     end
 
-    pp @guesses
+    # pp @guesses
 
   end
 
@@ -87,9 +87,33 @@ class Game
 
   def get_representation(guess)
     if guess[:number]
-      return " #{guess[:number]} "
+      return " #{apply_color(guess[:number])} "
     else
-      return " _ "
+      return " _ ".bold
     end
+  end
+
+  def apply_color(number)
+    
+    output = " #{number} "
+    
+    case number 
+    when 0
+      output = output.bg_black.gray
+    when 1
+      output = output.bg_cyan.gray
+    when 2
+      output = output.bg_green.gray
+    when 3
+      output = output.bg_red.gray
+    when 4
+      output = output.bg_magenta.gray
+    when 5
+      output = output.bg_brown
+    else
+      output = output.bg_red
+    end
+
+    return output
   end
 end
