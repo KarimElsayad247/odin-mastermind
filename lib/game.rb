@@ -3,25 +3,28 @@ require_relative 'string_color_utils'
 # Represents game state, and contains functions that modifes game state.
 class Game
   # How many times a player can still try i.e, number of rows on baord
-  INITIAL_CHANCES = 12
+  DEFAULT_INITIAL_CHANCES = 12
 
   # How long the code is i.e, how many holes for each row of the board
-  CODE_LEN = 4
+  DEFAULT_CODE_LEN = 4
 
   # How many colors the head can be i.e, the numbers in the code array
   # will be in the range [0..COLORS_COUNT]
   COLORS_COUNT = 6
 
-  def initialize
-    @code = Array.new(CODE_LEN) { rand(COLORS_COUNT) }
-    @remaining_chances = INITIAL_CHANCES
-    @guesses = @code.map do |_number|
+  def initialize(chances = DEFAULT_INITIAL_CHANCES, code_len = DEFAULT_CODE_LEN)
+    @code = Array.new(code_len) { rand(COLORS_COUNT) }
+    @initial_chances = chances
+    @remaining_chances = chances
+    @guesses = @code.map do
       {
         color: false,
         position: false
       }
     end
   end
+
+
 
   # Show the state of the game to the player in a nice, descriptive manner
   # showing how well the player is doing, and how many chances remain+
@@ -37,7 +40,7 @@ class Game
     puts ''
     puts "#{num_correct_guesses} guesses correct in color and position".green
     puts "#{num_close_guesses} guesses correct in color, but not position".brown
-    puts "Current attempt: #{INITIAL_CHANCES - @remaining_chances + 1}/#{INITIAL_CHANCES}"
+    puts "Current attempt: #{@initial_chances - @remaining_chances + 1}/#{@initial_chances}"
   end
 
   def make_guess(guess)
@@ -92,8 +95,10 @@ class Game
   end
 
   def conclude
-    puts 'Code was'
-    @code.map { |digit| get_representation(digit) }.each { |x| print " #{x} " }
+    unless won?
+      puts 'Code was'
+    end
+    @code.each { |x| print " #{apply_color(x)} " }
   end
 
   private
@@ -103,7 +108,7 @@ class Game
   end
 
   def get_representation(guess)
-    if guess[:numbeSr]
+    if guess[:number]
       " #{apply_color(guess[:number])} "
     else
       ' _ '.bold
