@@ -8,6 +8,8 @@ The code master chooses a code represented by 4 digits, where each digit corresp
 
 The code breaker enters a number consisting of 4 digits, each digit in the range [0,5] inclusive, the value of the digit corresponds to a different color in the original rules.
 
+Made as part of the [The Odin Project Ruby course.](https://www.theodinproject.com/lessons/ruby-mastermind)
+
 ## How to play
 
 run
