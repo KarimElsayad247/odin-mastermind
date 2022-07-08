@@ -24,7 +24,9 @@ class Game
     end
   end
 
-
+  def code=(new_code)
+    @code = new_code.to_s.chars.map(&:to_i)
+  end
 
   # Show the state of the game to the player in a nice, descriptive manner
   # showing how well the player is doing, and how many chances remain+
